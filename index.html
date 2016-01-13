@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>Permalinks</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 50px;
+        }
+
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Starter</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Permalink</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container" ng-app="permalink-generator" ng-controller="PermalinkGenerator">
+    <h1>Permalinks for Google Drive Resources</h1>
+    <form role="form">
+        <fieldset>
+            <div class="form-group">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Google Drive Sharable Url (can be file or folder)"
+                       ng-model="sharedUrl"/>
+            </div>
+            <div class="form-group">
+                <input type="submit"
+                       class="btn btn-primary btn-lg"
+                       value="Generate Permalink"
+                       ng-click="generate()"/>
+            </div>
+        </fieldset>
+    </form>
+    <div ng-show="links">
+        <p>
+            <h2>Resource ID</h2>
+            <span>{{links.id}}</span>
+        </p>
+        <p>
+            <h2>Export link</h2>
+            <a href="#" ng-href="{{links.export}}">{{links.export}}</a>
+        </p>
+        <p>
+            <h2>Web resource</h2>
+            <a href="#" ng-href="{{links.web}}">{{links.web}}</a>
+        </p>
+    </div>
+</div>
+<!-- /.container -->
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+<script type="text/javascript">
+    angular
+            .module("permalink-generator", [])
+            .controller("PermalinkGenerator", function ($scope) {
+				
+				var _findId = function(url) {
+					var regex = [
+						/https:\/\/drive.google.com\/.*id=([^&]+)(&|$)/,
+						/https:\/\/drive.google.com\/file\/d\/(.+?)(\/|$).*/
+					]
+					
+					for (var i = 0; i < regex.length; i++) {
+						var match = regex[i].exec($scope.sharedUrl);
+						var id = match ? match[1] : "";
+						if (id) {
+							return id;
+						}
+					}
+					return null;
+				};
+				
+				$scope.sharedUrl = "https://drive.google.com/file/d/0B0b09VuqaAG8ZjNnNlhyNVhKdjg/view?usp=sharing";
+                $scope.generate = function () {
+                    $scope.permaLink = null;
+                    var id = _findId($scope.sharedUrl)
+					if (!id) {						
+						$scope.links = undefined;
+						alert('No resource ID could be found in the given URL');
+					} else {
+						$scope.links = {
+							id: id,
+							export: "http://drive.google.com/uc?id=" + id,
+							web: "http://www.googledrive.com/host/" + id
+						}
+					}
+					
+                    
+                }
+            });
+</script>
+</body>
+</html>
