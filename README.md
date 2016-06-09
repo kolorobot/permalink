@@ -24,4 +24,5 @@ The tool is available as a simple HTML page here: <a href="http://kolorobot.gith
 - Share the link or use it on your website!
 
 ## References
+
 The way the links are generated is described here: http://googlesystem.blogspot.com/2013/02/permalinks-for-google-drive-images.html
